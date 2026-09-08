@@ -1,0 +1,10 @@
+# Phase 0 project configuration.
+# Model, dataset, hardware, API, and LLM settings are intentionally omitted
+# until those decisions are made in later phases.
+
+project:
+  name: Q-RadAssist
+  phase: 0
+
+config:
+  diseases_file: config/diseases.json

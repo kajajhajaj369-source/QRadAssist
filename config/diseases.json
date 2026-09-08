@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "diseases": [
+    {
+      "id": "pneumonia",
+      "display_name": "Pneumonia",
+      "enabled": true
+    },
+    {
+      "id": "covid19",
+      "display_name": "COVID-19",
+      "enabled": true
+    },
+    {
+      "id": "pleural_effusion",
+      "display_name": "Pleural Effusion",
+      "enabled": true
+    },
+    {
+      "id": "atelectasis",
+      "display_name": "Atelectasis",
+      "enabled": true
+    }
+  ]
+}

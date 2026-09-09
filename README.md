@@ -1,12 +1,15 @@
-﻿# QRadAssist
+# Q-RadAssist
 
 Explainable hybrid AI and quantum machine learning framework for multi-label
 chest X-ray analysis and intelligent report generation.
 
-This repository is a research-oriented medical decision-support prototype.
-It is not a clinical product.
+This repository is a research-oriented medical decision-support prototype. It
+is not a clinical product.
 
-**Current status: Phase 0 (project foundation).** Later phases have not started.
+**Current status: Phase 1A (dataset selection, documentation only).**
+Phase 0 foundation is in place. CheXpert is the selected primary dataset.
+The dataset has not been downloaded. Preprocessing, training, QML, LLM, API,
+and frontend work have not started.
 
 ## Short description
 
@@ -21,41 +24,44 @@ classical pipeline.
 
 ```
 Chest X-ray
-    -> Image validation & preprocessing
-    -> Classical deep-learning multi-label classifier
-    -> Disease predictions
-    -> XAI explanation
-    -> Classical feature representation
-    -> Hybrid quantum-classical / QML branch
-    -> Comparison of classical vs QML results
-    -> Structured findings
-    -> Grounded LLM report generation
-    -> Web interface
+    → Image validation & preprocessing
+    → Classical deep-learning multi-label classifier
+    → Disease predictions
+    → XAI explanation
+    → Classical feature representation
+    → Hybrid quantum-classical / QML branch
+    → Comparison of classical vs QML results
+    → Structured findings
+    → Grounded LLM report generation
+    → Web interface
 ```
 
-Phase 0 implements configuration, a disease registry, data contracts, and
-documentation of these boundaries. No model training, dataset download, QML,
-LLM, API server, or frontend is included yet.
+Phase 0 established configuration, a disease registry, data contracts, and
+component boundaries. Phase 1A records the CheXpert-based core task in
+documentation only. No model training, dataset download, QML, LLM, API
+server, or frontend is included yet.
 
-Architecture notes: [docs/architecture/overview.md](docs/architecture/overview.md).
+Architecture notes: [`docs/architecture/overview.md`](docs/architecture/overview.md).
 
 ## Initial disease labels
 
 The system is **multi-label**: one X-ray may have several positive findings.
 Labels are not mutually exclusive.
 
-Initial registry (`config/diseases.json`):
+The initial **core training labels** (CheXpert, multi-label) are:
 
 | id | display name |
 | --- | --- |
 | `pneumonia` | Pneumonia |
-| `covid19` | COVID-19 |
-| `pleural_effusion` | Pleural Effusion |
 | `atelectasis` | Atelectasis |
+| `pleural_effusion` | Pleural Effusion |
 
-The disease architecture is extensible. Application code reads N diseases from
-the registry instead of hard-coding this list. Adding a disease to the
-registry does not train a model or make that disease detectable.
+COVID-19 is **not** in the core training set. It remains in
+`config/diseases.json` as an extensible registry entry for a possible later
+external/generalization experiment. Adding a disease to the registry does not
+train a model or make that disease detectable.
+
+See [`docs/research/dataset-selection.md`](docs/research/dataset-selection.md).
 
 ## Major components
 
@@ -70,7 +76,7 @@ registry does not train a model or make that disease detectable.
 | Backend | Orchestration, separate from model internals |
 | Frontend | Presentation only; no ML logic |
 
-Details: [docs/architecture/component-boundaries.md](docs/architecture/component-boundaries.md).
+Details: [`docs/architecture/component-boundaries.md`](docs/architecture/component-boundaries.md).
 
 ## Research questions
 
@@ -79,29 +85,35 @@ Details: [docs/architecture/component-boundaries.md](docs/architecture/component
 3. How does a hybrid quantum-classical classifier compare with a classical classifier for the selected chest X-ray classification task?
 4. Can structured model predictions and explainability information be converted into a useful natural-language report while minimizing unsupported content?
 
-See [docs/research/research-questions.md](docs/research/research-questions.md).
+See [`docs/research/research-questions.md`](docs/research/research-questions.md).
 
 ## Development phases
 
 | Phase | Scope |
 | --- | --- |
-| **0** | Repository foundation, registry, config, contracts, docs, basic tests |
-| 1 | Dataset strategy, preprocessing design, evaluation plan (not started) |
+| **0** | Repository foundation, registry, config, contracts, docs, basic tests (complete) |
+| **1A** | Primary dataset selection and core-label documentation (current) |
+| 1B | Dataset access, preprocessing, and split design (not started) |
 | 2 | Classical multi-label model (not started) |
 | 3 | XAI (not started) |
 | 4 | Experimental QML comparison (not started) |
 | 5 | Grounded reporting (not started) |
 | 6 | Interface and integration (not started) |
 
-Phases 1-6 are planning labels only. Their internals are not specified here.
+Later phase internals remain unspecified except where Phase 1A documents the
+dataset decision.
 
 ## Data
 
-Later work will use **real-world medical imaging datasets**. AI-generated
-X-rays are **not** part of the core dataset. Datasets are not downloaded in
-Phase 0.
+**Primary dataset (selected, not downloaded): CheXpert.**
 
-## Running Phase 0 tests
+The project uses **real-world medical imaging datasets**. AI-generated X-rays
+are **not** part of the core dataset.
+
+Rationale, COVID-19 exclusion, and known dataset risks:
+[`docs/research/dataset-selection.md`](docs/research/dataset-selection.md).
+
+## Running tests
 
 Python 3.10+ is assumed.
 
@@ -119,4 +131,4 @@ clinical diagnoses, or guarantee clinical accuracy. It will not claim quantum
 advantage without experimental evidence. An XAI heatmap does not prove
 disease. The LLM does not independently diagnose an X-ray.
 
-See [docs/research/project-boundaries.md](docs/research/project-boundaries.md).
+See [`docs/research/project-boundaries.md`](docs/research/project-boundaries.md).

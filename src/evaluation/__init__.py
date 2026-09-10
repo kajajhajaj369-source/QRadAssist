@@ -1,4 +1,6 @@
-"""Evaluation utilities for later experiments.
+"""Evaluation utilities.
 
-No metrics or experimental results are defined in Phase 0.
+Phase 1C adds local CheXpert image/metadata integrity verification.
+No model metrics are defined yet.
 """
+

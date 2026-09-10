@@ -65,8 +65,9 @@ def split_patients(
     rng.shuffle(shuffled_patients)
 
     num_val_patients = max(1, int(round(len(shuffled_patients) * val_fraction)))
-    val_patient_set = set(shuffled_patients[:num_val_patients])
-    train_patient_set = set(shuffled_patients[num_val_patients:])
+    num_train_patients = len(shuffled_patients) - num_val_patients
+    train_patient_set = set(shuffled_patients[:num_train_patients])
+    val_patient_set = set(shuffled_patients[num_train_patients:])
 
     train_samples: list[SampleManifest] = []
     val_samples: list[SampleManifest] = []

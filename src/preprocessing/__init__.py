@@ -21,6 +21,7 @@ from preprocessing.manifest import (
     resolve_local_image_path,
     save_manifest_csv,
 )
+from preprocessing.materialize import materialize_splits
 from preprocessing.splitting import (
     PatientLeakageError,
     select_development_cohort,
@@ -50,11 +51,12 @@ __all__ = [
     "filter_manifest_by_view",
     "save_manifest_csv",
     "load_manifest_csv",
-    # Splitting
+    # Splitting & Materialization
     "PatientLeakageError",
     "verify_zero_patient_overlap",
     "split_patients",
     "select_development_cohort",
+    "materialize_splits",
     # Transforms
     "PreprocessConfig",
     "DeterministicPreprocessor",

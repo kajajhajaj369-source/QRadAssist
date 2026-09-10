@@ -19,7 +19,7 @@ from typing import Sequence
 from paths import PROJECT_ROOT, RAW_DATA_DIR
 from preprocessing.labels import TARGET_LABELS
 
-DEFAULT_IMAGE_ROOT = RAW_DATA_DIR / "chexpert-small"
+DEFAULT_IMAGE_ROOT = (RAW_DATA_DIR / "chexpert-small").resolve()
 
 CSV_PATH_PREFIXES = (
     "CheXpert-v1.0-small/",
@@ -94,7 +94,7 @@ def resolve_local_image_path(raw_csv_path: str, image_root: Path = DEFAULT_IMAGE
             rel = raw[len(prefix) :]
             if not rel:
                 raise ValueError(f"Path has prefix but no relative target: {raw_csv_path!r}")
-            return (image_root / rel).resolve()
+            return image_root / rel
     raise ValueError(
         f"Cannot resolve image path; expected prefix {CSV_PATH_PREFIXES} but got {raw_csv_path!r}"
     )

@@ -9,3 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_DIR = PROJECT_ROOT / "config"
 DEFAULT_SETTINGS_FILE = CONFIG_DIR / "settings.yaml"
 DEFAULT_DISEASES_FILE = CONFIG_DIR / "diseases.json"
+DATA_DIR = PROJECT_ROOT / "data"
+RAW_DATA_DIR = DATA_DIR / "raw"
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
+SPLITS_DIR = DATA_DIR / "splits"

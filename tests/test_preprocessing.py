@@ -315,3 +315,119 @@ def test_deterministic_preprocessor_synthetic_image(tmp_path: Path):
     with pytest.raises(ValueError, match="requires explicit 'mean' and 'std' statistics"):
         preprocessor_invalid(img)
 
+
+# --- 10. Training Normalization Statistics Tests ---
+
+def test_compute_training_statistics_synthetic(tmp_path: Path):
+    from preprocessing import compute_training_statistics
+
+    # Create two synthetic images with known constant pixel values
+    img1 = Image.new("L", (20, 20), color=51)   # 51 / 255.0 = 0.20
+    img2 = Image.new("L", (20, 20), color=204)  # 204 / 255.0 = 0.80
+
+    p1 = tmp_path / "img1.jpg"
+    p2 = tmp_path / "img2.jpg"
+    img1.save(p1, format="JPEG")
+    img2.save(p2, format="JPEG")
+
+    mock_samples = [
+        SampleManifest("s1", p1.as_posix(), "CheXpert-v1.0/train/p1.jpg", "001", "1", "Frontal", "AP", "", "", ""),
+        SampleManifest("s2", p2.as_posix(), "CheXpert-v1.0/train/p2.jpg", "002", "1", "Frontal", "PA", "", "", ""),
+    ]
+    manifest_file = tmp_path / "train_manifest.csv"
+    save_manifest_csv(mock_samples, manifest_file)
+
+    stats = compute_training_statistics(
+        manifest_path=manifest_file,
+        output_path=None,
+        image_size=(20, 20),
+    )
+
+    assert stats["total_images_processed"] == 2
+    assert stats["total_pixels_processed"] == 2 * 20 * 20
+    # Mean of 0.20 and 0.80 is 0.50 (within slight JPEG compression tolerance)
+    assert 0.48 <= stats["mean"] <= 0.52
+    assert stats["std"] > 0.0
+    assert 0.28 <= stats["std"] <= 0.32
+
+
+def test_compute_training_statistics_rejects_non_frontal(tmp_path: Path):
+    from preprocessing import compute_training_statistics
+
+    img = Image.new("L", (10, 10), color=128)
+    p = tmp_path / "lateral.jpg"
+    img.save(p, format="JPEG")
+
+    mock_samples = [
+        SampleManifest("s1", p.as_posix(), "CheXpert-v1.0/train/lat.jpg", "001", "1", "Lateral", "", "", "", ""),
+    ]
+    manifest_file = tmp_path / "train_manifest.csv"
+    save_manifest_csv(mock_samples, manifest_file)
+
+    with pytest.raises(ValueError, match="non-frontal image"):
+        compute_training_statistics(manifest_path=manifest_file, output_path=None)
+
+
+def test_compute_training_statistics_rejects_validation_manifest(tmp_path: Path):
+    from preprocessing import compute_training_statistics
+
+    manifest_file = tmp_path / "val_manifest.csv"
+    manifest_file.write_text("dummy", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Attempted to calculate training statistics on validation manifest"):
+        compute_training_statistics(manifest_path=manifest_file, output_path=None)
+
+
+def test_compute_training_statistics_rejects_validation_rows(tmp_path: Path):
+    from preprocessing import compute_training_statistics
+
+    img = Image.new("L", (10, 10), color=128)
+    p = tmp_path / "img.jpg"
+    img.save(p, format="JPEG")
+
+    # Row marked with split="val"
+    mock_samples = [
+        SampleManifest("s1", p.as_posix(), "CheXpert-v1.0/train/p1.jpg", "001", "1", "Frontal", "AP", "", "", "", split="val"),
+    ]
+    manifest_file = tmp_path / "train_manifest.csv"
+    save_manifest_csv(mock_samples, manifest_file)
+
+    with pytest.raises(ValueError, match="Encountered validation image/sample"):
+        compute_training_statistics(manifest_path=manifest_file, output_path=None)
+
+    # Row with path under valid/
+    mock_samples_2 = [
+        SampleManifest("s1", p.as_posix(), "CheXpert-v1.0/valid/p1.jpg", "001", "1", "Frontal", "AP", "", "", ""),
+    ]
+    # Point relative image path to valid
+    mock_samples_2[0].image_path = "data/raw/chexpert-small/valid/patient00001/study1/view1_frontal.jpg"
+    manifest_file_2 = tmp_path / "train_manifest_2.csv"
+    save_manifest_csv(mock_samples_2, manifest_file_2)
+
+    with pytest.raises(ValueError, match="Encountered validation image/sample"):
+        compute_training_statistics(manifest_path=manifest_file_2, output_path=None)
+
+
+def test_compute_training_statistics_determinism(tmp_path: Path):
+    from preprocessing import compute_training_statistics
+
+    img1 = Image.new("L", (16, 16), color=80)
+    img2 = Image.new("L", (16, 16), color=160)
+    p1 = tmp_path / "det1.jpg"
+    p2 = tmp_path / "det2.jpg"
+    img1.save(p1, format="JPEG")
+    img2.save(p2, format="JPEG")
+
+    mock_samples = [
+        SampleManifest("s1", p1.as_posix(), "CheXpert-v1.0/train/p1.jpg", "001", "1", "Frontal", "AP", "", "", ""),
+        SampleManifest("s2", p2.as_posix(), "CheXpert-v1.0/train/p2.jpg", "002", "1", "Frontal", "PA", "", "", ""),
+    ]
+    manifest_file = tmp_path / "train_manifest.csv"
+    save_manifest_csv(mock_samples, manifest_file)
+
+    stats1 = compute_training_statistics(manifest_path=manifest_file, output_path=None, image_size=(16, 16))
+    stats2 = compute_training_statistics(manifest_path=manifest_file, output_path=None, image_size=(16, 16))
+
+    assert stats1["mean"] == stats2["mean"]
+    assert stats1["std"] == stats2["std"]
+    assert stats1["variance"] == stats2["variance"]

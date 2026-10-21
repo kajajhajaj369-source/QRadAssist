@@ -4,13 +4,14 @@ This module defines the data preparation and deterministic preprocessing pipelin
 adhering strictly to the Phase 1D dataset protocol (docs/research/dataset-protocol.md).
 """
 
-from preprocessing.labels import (
+from .labels import (
     SUPPORTED_POLICIES,
     TARGET_LABELS,
     classify_raw_label,
     encode_labels,
 )
-from preprocessing.manifest import (
+from .compute_stats import compute_training_statistics
+from .manifest import (
     DEFAULT_IMAGE_ROOT,
     SampleManifest,
     filter_manifest_by_view,
@@ -21,14 +22,14 @@ from preprocessing.manifest import (
     resolve_local_image_path,
     save_manifest_csv,
 )
-from preprocessing.materialize import materialize_splits
-from preprocessing.splitting import (
+from .materialize import materialize_splits
+from .splitting import (
     PatientLeakageError,
     select_development_cohort,
     split_patients,
     verify_zero_patient_overlap,
 )
-from preprocessing.transforms import (
+from .transforms import (
     AugmentationConfig,
     DeterministicPreprocessor,
     PreprocessConfig,
@@ -57,6 +58,7 @@ __all__ = [
     "split_patients",
     "select_development_cohort",
     "materialize_splits",
+    "compute_training_statistics",
     # Transforms
     "PreprocessConfig",
     "DeterministicPreprocessor",

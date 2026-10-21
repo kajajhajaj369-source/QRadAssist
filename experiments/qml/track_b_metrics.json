@@ -1,0 +1,99 @@
+{
+  "timestamp_utc": "2026-10-21T16:02:32Z",
+  "experiment": "Track B: Feature-Based Classical vs. Simulated Quantum Head",
+  "feature_extractor": {
+    "checkpoint": "experiments\\full_gpu\\best_full_model.pt",
+    "sha256": "4b74019200acc0d0e7a9cdc7d5e005a6fb31ad55a482e947759808fd9726315a",
+    "feature_dim": 1024,
+    "status": "frozen"
+  },
+  "datasets": {
+    "train_manifest": "data\\splits\\train_manifest.csv",
+    "train_samples": 5000,
+    "val_manifest": "experiments\\dev_gpu\\val_dev_1500.csv",
+    "val_samples": 1500,
+    "val_counts": {
+      "Pneumonia": {
+        "total": 1500,
+        "unmasked": 1364,
+        "positive": 22,
+        "negative": 1342,
+        "masked_uncertain": 136
+      },
+      "Atelectasis": {
+        "total": 1500,
+        "unmasked": 1260,
+        "positive": 190,
+        "negative": 1070,
+        "masked_uncertain": 240
+      },
+      "Pleural Effusion": {
+        "total": 1500,
+        "unmasked": 1442,
+        "positive": 620,
+        "negative": 822,
+        "masked_uncertain": 58
+      }
+    }
+  },
+  "hyperparameters": {
+    "batch_size": 64,
+    "epochs": 15,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "seed": 42,
+    "uncertainty_policy": "u_ignore"
+  },
+  "hardware": {
+    "device": "cuda",
+    "gpu_name": "NVIDIA GeForce GTX 1650",
+    "peak_vram_mib": 191.2734375
+  },
+  "results": {
+    "classical_linear_head": {
+      "best_epoch": 3,
+      "runtime_seconds": 3.0328338146209717,
+      "train_loss": 0.2834094110168988,
+      "val_loss": 0.29491931200027466,
+      "val_auc": {
+        "Pneumonia": 0.8175721446958406,
+        "Atelectasis": 0.7020118052139694,
+        "Pleural Effusion": 0.8985578055097716
+      },
+      "mean_auc": 0.8060472518065271,
+      "val_ap": {
+        "Pneumonia": 0.11580579553283107,
+        "Atelectasis": 0.27327123780315415,
+        "Pleural Effusion": 0.8517401303017607
+      },
+      "mean_ap": 0.41360572121258193
+    },
+    "simulated_quantum_head": {
+      "best_epoch": 13,
+      "runtime_seconds": 5.638374328613281,
+      "train_loss": 0.39208349208288557,
+      "val_loss": 0.3882943093776703,
+      "val_auc": {
+        "Pneumonia": 0.4504470938897168,
+        "Atelectasis": 0.6054623708804723,
+        "Pleural Effusion": 0.8906267168982027
+      },
+      "mean_auc": 0.6488453938894639,
+      "val_ap": {
+        "Pneumonia": 0.014051833247583252,
+        "Atelectasis": 0.20423691991485243,
+        "Pleural Effusion": 0.8493007410948602
+      },
+      "mean_ap": 0.35586316475243196
+    },
+    "delta_quantum_minus_classical": {
+      "mean_auc_diff": -0.1572018579170632,
+      "mean_ap_diff": -0.057742556460149974,
+      "per_class_auc_diff": {
+        "Pneumonia": -0.3671250508061238,
+        "Atelectasis": -0.09654943433349716,
+        "Pleural Effusion": -0.007931088611568882
+      }
+    }
+  }
+}

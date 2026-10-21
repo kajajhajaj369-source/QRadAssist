@@ -12,6 +12,7 @@ build/
 .coverage
 htmlcov/
 .venv/
+.venv_cuda/
 venv/
 env/
 
@@ -41,6 +42,8 @@ data/splits/**
 # Trained artifacts (keep directory placeholders)
 models/classical/**
 !models/classical/.gitkeep
+!src/models/classical/best_model.pt
+!experiments/full_gpu/best_full_model.pt
 models/qml/**
 !models/qml/.gitkeep
 

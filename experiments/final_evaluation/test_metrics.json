@@ -1,0 +1,230 @@
+{
+  "metadata": {
+    "evaluation_timestamp_utc": "2026-10-21T14:47:55.605608+00:00",
+    "model_architecture": "DenseNet121MultiLabel",
+    "checkpoint_path": "E:\\College\\QRadAssist\\experiments\\full_gpu\\best_full_model.pt",
+    "checkpoint_sha256": "4b74019200acc0d0e7a9cdc7d5e005a6fb31ad55a482e947759808fd9726315a",
+    "target_labels": [
+      "Pneumonia",
+      "Atelectasis",
+      "Pleural Effusion"
+    ],
+    "device": "cuda",
+    "source_test_dataset": "E:\\College\\QRadAssist\\data\\raw\\chexpert-small\\valid.csv",
+    "total_test_samples": 234,
+    "eligible_frontal_samples": 202,
+    "excluded_lateral_samples": 32,
+    "patient_overlap_verification": {
+      "train_patients_count": 58081,
+      "internal_val_patients_count": 6453,
+      "test_patients_count": 200,
+      "overlap_train_test": 0,
+      "overlap_val_test": 0,
+      "status": "PASS_ZERO_LEAKAGE"
+    }
+  },
+  "primary_evaluation_frontal_only": {
+    "cohort_description": "Official CheXpert held-out validation benchmark, Frontal views only (AP and PA)",
+    "sample_count": 202,
+    "inference_failures": [],
+    "macro_auroc": 0.8538865515416859,
+    "macro_average_precision": 0.5767457207746557,
+    "metrics_per_label": {
+      "Pneumonia": {
+        "positive_count": 8,
+        "negative_count": 194,
+        "missing_count": 0,
+        "prevalence": 0.039603960396039604,
+        "auroc": 0.8182989690721649,
+        "auroc_undefined_reason": null,
+        "average_precision": 0.15883664326216607,
+        "exploratory_threshold_0_5": {
+          "tp": 0,
+          "fp": 0,
+          "tn": 194,
+          "fn": 8,
+          "confusion_matrix": [
+            [
+              194,
+              0
+            ],
+            [
+              8,
+              0
+            ]
+          ],
+          "sensitivity_recall": 0.0,
+          "specificity": 1.0,
+          "precision_ppv": 0.0,
+          "npv": 0.9603960396039604,
+          "accuracy": 0.9603960396039604,
+          "f1_score": 0.0
+        }
+      },
+      "Atelectasis": {
+        "positive_count": 75,
+        "negative_count": 127,
+        "missing_count": 0,
+        "prevalence": 0.3712871287128713,
+        "auroc": 0.8075590551181103,
+        "auroc_undefined_reason": null,
+        "average_precision": 0.6959610748018188,
+        "exploratory_threshold_0_5": {
+          "tp": 9,
+          "fp": 1,
+          "tn": 126,
+          "fn": 66,
+          "confusion_matrix": [
+            [
+              126,
+              1
+            ],
+            [
+              66,
+              9
+            ]
+          ],
+          "sensitivity_recall": 0.12,
+          "specificity": 0.9921259842519685,
+          "precision_ppv": 0.9,
+          "npv": 0.65625,
+          "accuracy": 0.6683168316831684,
+          "f1_score": 0.21176470588235294
+        }
+      },
+      "Pleural Effusion": {
+        "positive_count": 64,
+        "negative_count": 138,
+        "missing_count": 0,
+        "prevalence": 0.31683168316831684,
+        "auroc": 0.9358016304347827,
+        "auroc_undefined_reason": null,
+        "average_precision": 0.8754394442599822,
+        "exploratory_threshold_0_5": {
+          "tp": 37,
+          "fp": 6,
+          "tn": 132,
+          "fn": 27,
+          "confusion_matrix": [
+            [
+              132,
+              6
+            ],
+            [
+              27,
+              37
+            ]
+          ],
+          "sensitivity_recall": 0.578125,
+          "specificity": 0.9565217391304348,
+          "precision_ppv": 0.8604651162790697,
+          "npv": 0.8301886792452831,
+          "accuracy": 0.8366336633663366,
+          "f1_score": 0.6915887850467289
+        }
+      }
+    }
+  },
+  "exploratory_evaluation_all_views": {
+    "cohort_description": "Official CheXpert held-out validation benchmark, all 234 views (including 32 lateral views)",
+    "sample_count": 234,
+    "inference_failures": [],
+    "macro_auroc": 0.8216153637983371,
+    "macro_average_precision": 0.5387647180227876,
+    "metrics_per_label": {
+      "Pneumonia": {
+        "positive_count": 8,
+        "negative_count": 226,
+        "missing_count": 0,
+        "prevalence": 0.03418803418803419,
+        "auroc": 0.7721238938053098,
+        "auroc_undefined_reason": null,
+        "average_precision": 0.13031015853452416,
+        "exploratory_threshold_0_5": {
+          "tp": 0,
+          "fp": 0,
+          "tn": 226,
+          "fn": 8,
+          "confusion_matrix": [
+            [
+              226,
+              0
+            ],
+            [
+              8,
+              0
+            ]
+          ],
+          "sensitivity_recall": 0.0,
+          "specificity": 1.0,
+          "precision_ppv": 0.0,
+          "npv": 0.9658119658119658,
+          "accuracy": 0.9658119658119658,
+          "f1_score": 0.0
+        }
+      },
+      "Atelectasis": {
+        "positive_count": 80,
+        "negative_count": 154,
+        "missing_count": 0,
+        "prevalence": 0.3418803418803419,
+        "auroc": 0.7887987012987013,
+        "auroc_undefined_reason": null,
+        "average_precision": 0.6635427823928405,
+        "exploratory_threshold_0_5": {
+          "tp": 9,
+          "fp": 1,
+          "tn": 153,
+          "fn": 71,
+          "confusion_matrix": [
+            [
+              153,
+              1
+            ],
+            [
+              71,
+              9
+            ]
+          ],
+          "sensitivity_recall": 0.1125,
+          "specificity": 0.9935064935064936,
+          "precision_ppv": 0.9,
+          "npv": 0.6830357142857143,
+          "accuracy": 0.6923076923076923,
+          "f1_score": 0.2
+        }
+      },
+      "Pleural Effusion": {
+        "positive_count": 67,
+        "negative_count": 167,
+        "missing_count": 0,
+        "prevalence": 0.2863247863247863,
+        "auroc": 0.903923496291,
+        "auroc_undefined_reason": null,
+        "average_precision": 0.8224412131409979,
+        "exploratory_threshold_0_5": {
+          "tp": 39,
+          "fp": 11,
+          "tn": 156,
+          "fn": 28,
+          "confusion_matrix": [
+            [
+              156,
+              11
+            ],
+            [
+              28,
+              39
+            ]
+          ],
+          "sensitivity_recall": 0.582089552238806,
+          "specificity": 0.9341317365269461,
+          "precision_ppv": 0.78,
+          "npv": 0.8478260869565217,
+          "accuracy": 0.8333333333333334,
+          "f1_score": 0.6666666666666667
+        }
+      }
+    }
+  }
+}

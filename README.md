@@ -132,3 +132,50 @@ advantage without experimental evidence. An XAI heatmap does not prove
 disease. The LLM does not independently diagnose an X-ray.
 
 See [`docs/research/project-boundaries.md`](docs/research/project-boundaries.md).
+
+## Installation & Quick Start
+
+```bash
+# Clone the repo (if you haven't already)
+git clone https://github.com/kajajhajaj369-source/QRadAssist.git
+cd QRadAssist
+
+# Create a clean virtual environment (recommended)
+python -m venv .venv_cuda
+.venv_cuda\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## Running the API locally
+
+```bash
+# Start the FastAPI server (default port 8003)
+uvicorn src.api.app:app --host 127.0.0.1 --port 8003
+```
+
+The server provides the following endpoints:
+- `GET /health` – health check.
+- `GET /labels` – list of disease labels expected by the model.
+- `POST /predict` – single‑image inference, returns sigmoid probabilities.
+- `POST /analyze` – full analysis (probabilities, draft report, Grad‑CAM heatmaps for **all** target diseases).
+
+## Model checkpoints
+
+Two checkpoint files are shipped with the repository and are **required** for inference:
+- `src/models/classical/best_model.pt` – classical DenseNet‑121 multi‑label model.
+- `experiments/full_gpu/best_full_model.pt` – full‑GPU trained version (identical architecture, different training run).
+
+Both files are under 30 MiB and are stored directly in the repository (no Git LFS needed). They are **read‑only** and should not be modified.
+
+## Running the test suite
+
+```bash
+pytest -q
+```
+All unit tests should pass on a clean environment.
+
+## Disclaimer (re‑stated)
+
+This project is a **research prototype** and **not** a clinically validated diagnostic tool. Predictions, Grad‑CAM visualisations, and generated reports are **assistive** only and must be reviewed by qualified medical professionals before any clinical use.

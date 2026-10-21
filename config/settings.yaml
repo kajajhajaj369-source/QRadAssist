@@ -1,6 +1,4 @@
-# Phase 0 project configuration.
-# Model, dataset, hardware, API, and LLM settings are intentionally omitted
-# until those decisions are made in later phases.
+# Q-RadAssist Project Configuration
 
 project:
   name: Q-RadAssist
@@ -8,3 +6,27 @@ project:
 
 config:
   diseases_file: config/diseases.json
+
+preprocessing:
+  # Baseline Preprocessing Specification (Phase 2C locked)
+  image_size: [224, 224]
+  interpolation: bilinear
+  color_mode: grayscale
+  channels_first: true
+  channel_count: 1
+  pixel_range: [0.0, 1.0]
+  pixel_dtype: float32
+  allowed_views: ["Frontal"]  # AP and PA only
+
+  # Normalization configuration
+  # Normalization is explicitly configurable (enabled/disabled).
+  # When enabled: true, mean and std must be supplied explicitly; missing mean/std raises ValueError.
+  # The values below are empirical statistics derived ONLY from the patient-level training partition
+  # (172,033 images in data/splits/train_manifest.csv). Validation data was strictly excluded.
+  normalization:
+    enabled: false
+    mean: 0.506422
+    std: 0.286777
+    statistics_source: data/splits/training_statistics.json
+    partition: train_only
+    num_images: 172033

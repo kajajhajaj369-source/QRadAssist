@@ -1,0 +1,101 @@
+import random
+import numpy as np
+import torch
+from torch import nn
+from torch.utils.data import DataLoader, Subset
+from pathlib import Path
+
+from .model import DenseNet121MultiLabel
+from .loss import masked_bce_with_logits
+from .metrics import compute_auc_ap
+from .dataset import CheXpertDataset
+from preprocessing.transforms import DeterministicPreprocessor, PreprocessConfig
+
+DEFAULT_BATCH_SIZE = 16
+DEFAULT_LR = 1e-4
+DEFAULT_EPOCHS = 5
+DEFAULT_SEED = 42
+CHECKPOINT_PATH = Path(__file__).resolve().parents[2] / "models" / "classical" / "best_model.pt"
+
+
+def set_seed(seed: int = DEFAULT_SEED) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+
+def get_preprocessor() -> DeterministicPreprocessor:
+    # Use default config; it matches settings.yaml defaults
+    cfg = PreprocessConfig()
+    return DeterministicPreprocessor(cfg)
+
+
+def train(
+    train_manifest: Path,
+    val_manifest: Path,
+    batch_size: int = DEFAULT_BATCH_SIZE,
+    lr: float = DEFAULT_LR,
+    epochs: int = DEFAULT_EPOCHS,
+    seed: int = DEFAULT_SEED,
+    checkpoint_path: Path = CHECKPOINT_PATH,
+    max_train_samples: int | None = None,
+) -> tuple[DenseNet121MultiLabel, dict, dict]:
+    """Train DenseNet‑121 on CheXpert data.
+
+    Returns the trained model and the final validation AUROC/AP dictionaries.
+    """
+    set_seed(seed)
+    preprocessor = get_preprocessor()
+    train_dataset = CheXpertDataset(train_manifest, preprocessor)
+    val_dataset = CheXpertDataset(val_manifest, preprocessor)
+    if max_train_samples is not None:
+        train_dataset = Subset(train_dataset, list(range(min(max_train_samples, len(train_dataset)))))
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+    model = DenseNet121MultiLabel(pretrained=True)
+    model.train()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+    best_val_auc = -1.0
+    for epoch in range(1, epochs + 1):
+        # Training step
+        for batch in train_loader:
+            imgs = batch["image"]
+            targets = batch["target"]
+            mask = batch["mask"]
+            optimizer.zero_grad()
+            logits = model(imgs)
+            loss = masked_bce_with_logits(logits, targets, mask)
+            loss.backward()
+            optimizer.step()
+        # Validation step
+        model.eval()
+        all_logits = []
+        all_targets = []
+        all_masks = []
+        with torch.no_grad():
+            for batch in val_loader:
+                imgs = batch["image"]
+                targets = batch["target"]
+                mask = batch["mask"]
+                logits = model(imgs)
+                all_logits.append(logits)
+                all_targets.append(targets)
+                all_masks.append(mask)
+        val_logits = torch.cat(all_logits)
+        val_targets = torch.cat(all_targets)
+        val_masks = torch.cat(all_masks)
+        val_auc, val_ap = compute_auc_ap(val_logits, val_targets, val_masks)
+        # Simple checkpoint – keep best average AUROC (ignoring None)
+        avg_auc = np.mean([v for v in val_auc.values() if v is not None]) if any(v is not None for v in val_auc.values()) else -1.0
+        if avg_auc > best_val_auc:
+            best_val_auc = avg_auc
+            torch.save(model.state_dict(), checkpoint_path)
+        model.train()
+    # Load best model before returning
+    model.load_state_dict(torch.load(checkpoint_path))
+    model.eval()
+    return model, val_auc, val_ap

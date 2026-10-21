@@ -144,7 +144,7 @@ Designed for reproducible baseline evaluation and validation:
 | **Resizing** | `Image.Resampling.BILINEAR` | Deterministic, anti-aliased spatial reduction |
 | **Target Dimensions** | Default: `(224, 224)` | Standard CNN input size; configurable for high-res |
 | **Array Conversion** | NumPy `float32`, scaled to `[0.0, 1.0]` | Standard numerical range for neural networks |
-| **Normalization / Standardization** | Configurable (`normalize=False` default; requires explicit `mean` & `std`) | **No hard-coded/assumed statistics.** Pixel intensities are scaled to `[0.0, 1.0]`. Standardization statistics must be explicitly calculated from the training data in a later controlled step. |
+| **Normalization / Standardization** | Configurable (`normalize=False` default; requires explicit `mean` & `std`) | **No hard-coded/assumed statistics.** Pixel intensities are scaled to `[0.0, 1.0]`. Standardization statistics were explicitly established in Phase 2C from the training partition (mean: 0.506422, std: 0.286777; see [preprocessing-statistics.md](file:///e:/College/QRadAssist/docs/research/preprocessing-statistics.md)). |
 | **Channel Layout** | `(1, H, W)` (`channels_first=True`) | Standard PyTorch tensor convention |
 
 ### 8.2 Separation of Training Augmentation (`TrainingAugmentor`)

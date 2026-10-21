@@ -1,0 +1,21 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parents[1]))  # add project root to path
+
+from src.models.classical.training import train
+
+train_manifest = Path('data/splits/train_manifest.csv')
+val_manifest = Path('data/splits/val_manifest.csv')
+
+# Adjust parameters for a modest full training run
+model, val_auc, val_ap = train(
+    train_manifest=train_manifest,
+    val_manifest=val_manifest,
+    batch_size=8,
+    epochs=3,
+    max_train_samples=None,  # use full training set
+)
+
+print('Full training completed')
+print('Validation AUROC:', {k: v for k, v in val_auc.items() if v is not None})
+print('Validation AP:', {k: v for k, v in val_ap.items() if v is not None})
